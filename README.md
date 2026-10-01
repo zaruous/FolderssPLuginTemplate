@@ -85,6 +85,8 @@ Folderss 플러그인: bin/Debug/net8.0-windows/MyPlugin.zip
 ```
 .
 ├── FolderssPluginTemplate.sln
+├── LICENSE                      ← MIT
+├── .github/workflows/build.yml  ← 빌드·릴리스 자동화
 ├── src/
 │   └── MyPlugin/
 │       ├── MyPlugin.csproj      ← 빌드하면 zip까지 만든다 (PackPlugin 타깃)
@@ -272,6 +274,30 @@ UI 스레드에서 난 예외와 `Initialize`/`CreateView`의 예외는 Folderss
 
 ---
 
+## 릴리스 (GitHub Actions)
+
+`.github/workflows/build.yml`이 빌드와 배포를 자동으로 합니다.
+
+| 언제 | 하는 일 |
+|---|---|
+| `main` 푸시, PR | 빌드하고 플러그인 zip을 Actions 실행 결과의 **Artifacts**에 올린다 (확인용) |
+| `v*` 태그 푸시 | `plugin.json`의 `version`과 태그가 같은지 확인한 뒤, **GitHub 릴리스**를 만들고 `<id>-<version>.zip`을 첨부한다 |
+
+릴리스 순서:
+
+```powershell
+# 1. plugin.json의 "version"을 올린다 (예: 1.1.0) → 커밋·푸시
+# 2. 같은 버전으로 태그
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+- 태그와 `version`이 다르면 빌드가 실패하고 릴리스는 만들어지지 않습니다. `plugin.json`을 고친 뒤 태그를 다시 붙이세요.
+- 플러그인 폴더 이름을 바꿔도(`src/<이름>/`) 그대로 동작합니다. 다만 `src` 아래 `plugin.json`은 하나만 있어야 합니다.
+- 빌드는 Ubuntu 러너에서 합니다. WPF 플러그인이지만 `EnableWindowsTargeting` 설정 덕분에 컴파일은 Linux에서도 됩니다. 실행은 Windows에서만 됩니다.
+
+---
+
 ## 디버깅
 
 1. 빌드하고 zip을 등록합니다.
@@ -307,3 +333,11 @@ UI 스레드에서 난 예외와 `Initialize`/`CreateView`의 예외는 Folderss
 - [Folderss 플러그인 개발 가이드](https://github.com/zaruous/Folderss/blob/master/docs/plugin-development.md): plugin.json 전체, API 표, 오류 처리 범위
 - [튜토리얼: 주문서 플러그인 만들기](https://github.com/zaruous/Folderss/blob/master/docs/plugin-tutorial-order-form.md): 타이틀 + 그리드 화면을 단계별로
 - [예제: HelloPlugin](https://github.com/zaruous/Folderss/tree/master/samples/HelloPlugin): 폴더 패널, 본체 설정, 설정 탭
+
+---
+
+## 라이선스
+
+[MIT](LICENSE)
+
+이 템플릿으로 만든 플러그인은 원하는 라이선스로 배포해도 됩니다. 새 저장소를 만들면 `LICENSE`의 저작권자(`Copyright (c) 2026 zaruous`)를 본인으로 바꾸거나, 다른 라이선스로 교체하세요.
